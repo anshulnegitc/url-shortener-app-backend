@@ -11,7 +11,6 @@ const LINK_EXPIRATION = parseInt(process.env.LINK_EXPIRATION_TIME) || 900;
 const saveIp = (ip, type) => {
     iplocate(ip).then(async (result) => {
         if (result) {
-            console.log(result)
             let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
             if (continentEntity.length) {
                 continentEntity[0].entityData[[type]] += 1;
