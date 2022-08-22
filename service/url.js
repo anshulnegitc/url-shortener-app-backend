@@ -8,6 +8,28 @@ import genCounter from "../helper/counter.js";
 
 const LINK_EXPIRATION = parseInt(process.env.LINK_EXPIRATION_TIME) || 900;
 
+const saveIp = (ip, type) => {
+    iplocate(ip).then(async (result) => {
+        if (result) {
+            let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
+            if (continentEntity.length) {
+                continentEntity[0].entityData[[type]] += 1;
+                ContinentRepository().save(continentEntity[0]);
+            } else {
+                const entity = ContinentRepository().createEntity();
+                entity.name = result.continent;
+                entity.visitor = 1;
+                entity.links_gen = 0;
+                entity.links_redirect = 0;
+                await ContinentRepository().save(entity);
+            }
+        }
+    }
+    ).catch((err) => {
+        console.error(err);
+    });
+};
+
 export const ShortUrl = async (req, res) => {
     const {
         url
@@ -16,16 +38,7 @@ export const ShortUrl = async (req, res) => {
 
     const ip = "69.162.81.155";
     if (ip.length) {
-        iplocate(ip).then(async (result) => {
-            if (result) {
-                let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
-                continentEntity[0].entityData.links_gen += 1;
-                ContinentRepository().save(continentEntity[0]);
-            }
-        }
-        ).catch((err) => {
-            console.error(err);
-        });
+        saveIp(ip, 'links_gen');
     }
 
     let counterEntity = await CounterRepository().search().where('name').equals('links_generated').return.all();
@@ -49,16 +62,7 @@ export const ShortUrl = async (req, res) => {
 export const LongUrl = async (req, res) => {
     const ip = "69.162.81.155";
     if (ip.length) {
-        iplocate(ip).then(async (result) => {
-            if (result) {
-                let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
-                continentEntity[0].entityData.links_redirect += 1;
-                ContinentRepository().save(continentEntity[0]);
-            }
-        }
-        ).catch((err) => {
-            console.error(err);
-        });
+        saveIp(ip, 'links_redirect');
     }
 
     const {
@@ -131,7 +135,9 @@ export const SaveInfo = async (req, res) => {
     await CounterRepository().save(counterEntity[0]);
 
     const ip = "69.162.81.155";
+    console.log(req.headers["x-forwarded-for"])
     if (ip.length) {
+        saveIp(ip, 'visitor');
         iplocate(ip).then(async (result) => {
             if (result) {
                 let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
@@ -139,12 +145,7 @@ export const SaveInfo = async (req, res) => {
                     continentEntity[0].entityData.visitor += 1;
                     await ContinentRepository().save(continentEntity[0]);
                 } else {
-                    const entity = ContinentRepository().createEntity();
-                    entity.name = result.continent;
-                    entity.visitor = 1;
-                    entity.links_gen = 0;
-                    entity.links_redirect = 0;
-                    await ContinentRepository().save(entity);
+
                 }
             }
         }
