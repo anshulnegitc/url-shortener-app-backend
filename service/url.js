@@ -11,6 +11,7 @@ const LINK_EXPIRATION = parseInt(process.env.LINK_EXPIRATION_TIME) || 900;
 const saveIp = (ip, type) => {
     iplocate(ip).then(async (result) => {
         if (result) {
+            console.log(result)
             let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
             if (continentEntity.length) {
                 continentEntity[0].entityData[[type]] += 1;
@@ -36,7 +37,7 @@ export const ShortUrl = async (req, res) => {
     } = req.query;
 
 
-    const ip = "69.162.81.155";
+    const ip = req.headers["x-forwarded-for"];
     if (ip.length) {
         saveIp(ip, 'links_gen');
     }
@@ -60,7 +61,7 @@ export const ShortUrl = async (req, res) => {
 };
 
 export const LongUrl = async (req, res) => {
-    const ip = "69.162.81.155";
+    const ip = req.headers["x-forwarded-for"];
     if (ip.length) {
         saveIp(ip, 'links_redirect');
     }
@@ -134,8 +135,8 @@ export const SaveInfo = async (req, res) => {
     counterEntity[0].entityData.count = parseInt(counterEntity[0].entityData.count) + 1;
     await CounterRepository().save(counterEntity[0]);
 
-    const ip = "69.162.81.155";
-    console.log(req.headers["x-forwarded-for"])
+    const ip = req.headers["x-forwarded-for"];
+
     if (ip.length) {
         saveIp(ip, 'visitor');
         iplocate(ip).then(async (result) => {
