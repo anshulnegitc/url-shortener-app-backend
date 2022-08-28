@@ -53,7 +53,6 @@ export const ShortUrl = async (req, res) => {
     const urlEntity = UrlRepository().createEntity();
     urlEntity.long_url = url;
     urlEntity.short_url = await genCounter();
-    urlEntity.created_at = new Date().toUTCString();
 
     const id = await UrlRepository().save(urlEntity);
 

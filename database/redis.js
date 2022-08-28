@@ -46,7 +46,8 @@ const client = new Client();
                 'INCRBY',
                 'range', 100000]
         );
-        constant.counter = constant.counter - 100000;
+        constant.range = parseInt(constant.range);
+        constant.counter = constant.range - 100000;
     }
 
 })();
