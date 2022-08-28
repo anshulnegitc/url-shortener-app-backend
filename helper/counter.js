@@ -1,6 +1,6 @@
 import client from '../database/redis.js';
 
-import constant from '../constants/var';
+import constant from '../constants/var.js';
 
 function toBase62(num) {
     if (num === 0) {

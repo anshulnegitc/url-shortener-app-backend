@@ -2,7 +2,7 @@ import { Client } from 'redis-om';
 import CounterRepository from '../schema/counter.js';
 import ContinentRepository from '../schema/counter.js';
 import UrlRepository from '../schema/url.js';
-import constant from '../constants/var';
+import constant from '../constants/var.js';
 
 const client = new Client();
 (async function () {
