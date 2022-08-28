@@ -2,6 +2,7 @@ import { Client } from 'redis-om';
 import CounterRepository from '../schema/counter.js';
 import ContinentRepository from '../schema/counter.js';
 import UrlRepository from '../schema/url.js';
+import constant from '../constants/var';
 
 const client = new Client();
 (async function () {
@@ -22,7 +23,7 @@ const client = new Client();
         while (i < len) {
             entity = CounterRepository().createEntity();
             entity.name = expList[i];
-            entity.count = expList[i] === 'range' ? 1 : 0;
+            entity.count = 0;
             await CounterRepository().save(entity);
             i++;
         }
@@ -30,11 +31,20 @@ const client = new Client();
         CounterRepository().createIndex();
         ContinentRepository().createIndex();
         UrlRepository().createIndex();
+        constant.range = 100000;
+        constant.counter = 1;
         await client.execute(
             [
                 'SET',
-                'range', 1]
+                'range', 100000]
         );
+    } else {
+        constant.counter = await client.execute(
+            [
+                'INCRBY',
+                'range', 100000]
+        );
+        constant.range = constant.counter + 100000;
     }
 
 })();

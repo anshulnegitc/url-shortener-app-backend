@@ -1,6 +1,6 @@
 import client from '../database/redis.js';
 
-let counter = 0, range = 0;
+import constant from '../constants/var';
 
 function toBase62(num) {
     if (num === 0) {
@@ -18,17 +18,17 @@ function toBase62(num) {
 }
 
 async function genCounter() {
-    if (!counter || !range || counter > range) {
+    if (constant.counter > constant.range) {
         counter = await client.execute(
             [
                 'INCRBY',
                 'range', 100000]
         );
-        counter = parseInt(counter);
-        range = counter + 100000;
+        constant.counter = parseInt(counter);
+        constant.range = counter + 100000;
     }
-    ++counter;
-    return toBase62(counter);
+    ++constant.counter;
+    return toBase62(constant.counter);
 }
 
 export default genCounter;
