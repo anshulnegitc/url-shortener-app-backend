@@ -102,7 +102,7 @@ export const UpdateExp = async (req, res) => {
 };
 
 export const GetExp = async (req, res) => {
-    const records = await CounterRepository().search().where('name').not.eq('range').return.all();
+    const records = await CounterRepository().search().return.all();
     const totalRecords = records.length;
     res.status(200).json({
         message: "success", data: { totalRecords, records }

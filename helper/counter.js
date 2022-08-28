@@ -21,9 +21,10 @@ async function genCounter() {
     if (!counter || !range || counter > range) {
         counter = await client.execute(
             [
-                'HINCRBY',
-                'Counter:01GANTSYW9XR3A3HBJK5K11F6A', 'range', 100000]
+                'INCRBY',
+                'range', 100000]
         );
+        counter = parseInt(counter);
         range = counter + 100000;
     }
     ++counter;
