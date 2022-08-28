@@ -11,10 +11,10 @@ const LINK_EXPIRATION = parseInt(process.env.LINK_EXPIRATION_TIME) || 900;
 const saveIp = (ip, type) => {
     iplocate(ip).then(async (result) => {
         if (result) {
-            let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
-            if (continentEntity.length) {
-                continentEntity[0].entityData[[type]] += 1;
-                ContinentRepository().save(continentEntity[0]);
+            let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.first();
+            if (continentEntity) {
+                continentEntity.entityData[[type]] += 1;
+                ContinentRepository().save(continentEntity);
             } else {
                 const entity = ContinentRepository().createEntity();
                 entity.name = result.continent;
@@ -30,6 +30,12 @@ const saveIp = (ip, type) => {
     });
 };
 
+const counterInc = async (name) => {
+    let counterEntity = await CounterRepository().search().where('name').equals(name).return.first();
+    counterEntity.entityData.count = parseInt(counterEntity.entityData.count) + 1;
+    CounterRepository().save(counterEntity);
+};
+
 export const ShortUrl = async (req, res) => {
     const {
         url
@@ -41,9 +47,7 @@ export const ShortUrl = async (req, res) => {
         saveIp(ip, 'links_gen');
     }
 
-    let counterEntity = await CounterRepository().search().where('name').equals('links_generated').return.all();
-    counterEntity[0].entityData.count = parseInt(counterEntity[0].entityData.count) + 1;
-    await CounterRepository().save(counterEntity[0]);
+    counterInc('links_generated');
 
 
     const urlEntity = UrlRepository().createEntity();
@@ -53,7 +57,7 @@ export const ShortUrl = async (req, res) => {
 
     const id = await UrlRepository().save(urlEntity);
 
-    const s = await client.execute(['EXPIRE', `Url:${id}`, LINK_EXPIRATION]);
+    await client.execute(['EXPIRE', `Url:${id}`, LINK_EXPIRATION]);
 
     res.status(200).json({ message: "success", data: { shortUrl: urlEntity.short_url } });
 
@@ -69,14 +73,11 @@ export const LongUrl = async (req, res) => {
         code
     } = req.params;
 
-    let counterEntity = await CounterRepository().search().where('name').equals('links_redirected').return.all();
-    counterEntity[0].entityData.count = parseInt(counterEntity[0].entityData.count) + 1;
-    await CounterRepository().save(counterEntity[0]);
+    counterInc('links_redirected')
 
-    let url = await UrlRepository().search().where('short_url').equals(code).return.all();
-
-    if (url.length) {
-        res.redirect(url[0].entityData.long_url);
+    let url = await UrlRepository().search().where('short_url').equals(code).return.first();
+    if (url) {
+        res.redirect(url.entityData.long_url);
     } else {
         res.render('index.html', {
             url: process.env.FRONT_END_URL
@@ -130,28 +131,12 @@ export const GetContinent = async (req, res) => {
 };
 
 export const SaveInfo = async (req, res) => {
-    let counterEntity = await CounterRepository().search().where('name').equals('visitor').return.all();
-    counterEntity[0].entityData.count = parseInt(counterEntity[0].entityData.count) + 1;
-    await CounterRepository().save(counterEntity[0]);
+    counterInc('visitor');
 
     const ip = req.headers["x-forwarded-for"];
 
     if (ip.length) {
         saveIp(ip, 'visitor');
-        iplocate(ip).then(async (result) => {
-            if (result) {
-                let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.all();
-                if (continentEntity.length) {
-                    continentEntity[0].entityData.visitor += 1;
-                    await ContinentRepository().save(continentEntity[0]);
-                } else {
-
-                }
-            }
-        }
-        ).catch((err) => {
-            console.error(err);
-        });
     }
 
     res.status(200).json({ message: 'success' });
