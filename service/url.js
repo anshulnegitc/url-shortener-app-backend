@@ -14,7 +14,7 @@ const saveIp = (ip, type) => {
             let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.first();
             if (continentEntity) {
                 continentEntity.entityData[[type]] += 1;
-                ContinentRepository().save(continentEntity);
+                await ContinentRepository().save(continentEntity);
             } else {
                 const entity = ContinentRepository().createEntity();
                 entity.name = result.continent;
@@ -33,7 +33,7 @@ const saveIp = (ip, type) => {
 const counterInc = async (name) => {
     let counterEntity = await CounterRepository().search().where('name').equals(name).return.first();
     counterEntity.entityData.count = parseInt(counterEntity.entityData.count) + 1;
-    CounterRepository().save(counterEntity);
+    await CounterRepository().save(counterEntity);
 };
 
 export const ShortUrl = async (req, res) => {
