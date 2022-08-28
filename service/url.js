@@ -67,6 +67,7 @@ export const LongUrl = async (req, res) => {
     if (ip.length) {
         await saveIp(ip, 'links_redirect');
     }
+    counterInc('links_redirected');
 
     const {
         code
@@ -74,7 +75,7 @@ export const LongUrl = async (req, res) => {
 
     let url = await UrlRepository().search().where('short_url').equals(code).return.first();
     if (url) {
-        counterInc('links_redirected');
+
         res.redirect(url.entityData.long_url);
     } else {
         res.render('index.html', {
