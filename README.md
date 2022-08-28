@@ -31,9 +31,7 @@ Some analytics and expression values(like,star,thumbs up etc...) are permanently
 
 Here's a short video that explains the project and how it uses Redis:
 
-[Insert your own video here, and remove the one below]
-
-[![Embed your YouTube video](https://i.ytimg.com/vi/vyxdC1qK4NE/maxresdefault.jpg)](https://www.youtube.com/watch?v=vyxdC1qK4NE)
+[![Url Shortener](https://user-images.githubusercontent.com/55315115/187065005-b5b86519-252b-4ebc-83c2-3340e887504d.png)](https://youtu.be/YJlg9RTmKDM)
 
 ## How it works
 
