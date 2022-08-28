@@ -27,7 +27,7 @@ Some analytics and expression values(like,star,thumbs up etc...) are permanently
 
 
 
-# Overview video (Optional)
+# Overview video
 
 Here's a short video that explains the project and how it uses Redis:
 
