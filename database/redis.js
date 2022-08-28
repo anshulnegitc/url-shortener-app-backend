@@ -31,20 +31,22 @@ const client = new Client();
         CounterRepository().createIndex();
         ContinentRepository().createIndex();
         UrlRepository().createIndex();
-        constant.range = 100000;
+
         constant.counter = 1;
+        constant.range = 100000;
+
         await client.execute(
             [
                 'SET',
                 'range', 100000]
         );
     } else {
-        constant.counter = await client.execute(
+        constant.range = await client.execute(
             [
                 'INCRBY',
                 'range', 100000]
         );
-        constant.range = constant.counter + 100000;
+        constant.counter = constant.counter - 100000;
     }
 
 })();

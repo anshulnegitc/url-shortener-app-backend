@@ -18,16 +18,15 @@ function toBase62(num) {
 }
 
 async function genCounter() {
+    ++constant.counter;
     if (constant.counter > constant.range) {
-        counter = await client.execute(
+        constant.range = await client.execute(
             [
                 'INCRBY',
                 'range', 100000]
         );
-        constant.counter = parseInt(counter);
-        constant.range = counter + 100000;
+        constant.range = parseInt(counter.range);
     }
-    ++constant.counter;
     return toBase62(constant.counter);
 }
 

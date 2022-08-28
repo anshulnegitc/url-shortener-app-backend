@@ -8,7 +8,7 @@ import genCounter from "../helper/counter.js";
 
 const LINK_EXPIRATION = parseInt(process.env.LINK_EXPIRATION_TIME) || 900;
 
-const saveIp = (ip, type) => {
+const saveIp = async (ip, type) => {
     iplocate(ip).then(async (result) => {
         if (result) {
             let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.first();
@@ -66,7 +66,7 @@ export const ShortUrl = async (req, res) => {
 export const LongUrl = async (req, res) => {
     const ip = req.headers["x-forwarded-for"];
     if (ip.length) {
-        saveIp(ip, 'links_redirect');
+        await saveIp(ip, 'links_redirect');
     }
 
     const {
