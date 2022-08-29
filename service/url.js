@@ -9,9 +9,10 @@ import genCounter from "../helper/counter.js";
 const LINK_EXPIRATION = parseInt(process.env.LINK_EXPIRATION_TIME) || 900;
 
 const saveIp = async (ip, type) => {
-    if (ip.length > 3)
+    const nIp = process.env.NODE_ENV === 'local' ? process.env.LOCAL_IP : ip;
+    if (nIp.length) {
         iplocate(ip).then(async (result) => {
-            if (result) {
+            if (result && result.continent) {
                 let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.first();
                 if (continentEntity) {
                     continentEntity.entityData[[type]] += 1;
@@ -29,6 +30,8 @@ const saveIp = async (ip, type) => {
         ).catch((err) => {
             console.error(err);
         });
+    }
+
 };
 
 const counterInc = async (name) => {
