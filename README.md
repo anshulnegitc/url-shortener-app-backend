@@ -191,14 +191,6 @@ NODE_ENV = production
 REDIS_URL="" // redis host url
 ````
 
-#### Frontend
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anshulnegitc/url-shortener-app-frontend)
-
-````
-Set environment variables
-REACT_APP_BASE_URL = "" //Backend url eg https://u-s-app.herokuapp.com/
-````
-
 ## More Information about Redis Stack
 
 Here some resources to help you quickly get started using Redis Stack. If you still have questions, feel free to ask them in the [Redis Discord](https://discord.gg/redis) or on [Twitter](https://twitter.com/redisinc).
