@@ -176,11 +176,6 @@ REACT_APP_BASE_URL=http://localhost:51029/
 
 ## Deployment
 
-To make deploys work, you need to create free account on [Redis Cloud](https://redis.info/try-free-dev-to)
-
-### Heroku
-
-#### Backend
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anshulnegitc/url-shortener-app-backend)
 
 ````
