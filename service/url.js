@@ -9,25 +9,26 @@ import genCounter from "../helper/counter.js";
 const LINK_EXPIRATION = parseInt(process.env.LINK_EXPIRATION_TIME) || 900;
 
 const saveIp = async (ip, type) => {
-    iplocate(ip).then(async (result) => {
-        if (result) {
-            let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.first();
-            if (continentEntity) {
-                continentEntity.entityData[[type]] += 1;
-                await ContinentRepository().save(continentEntity);
-            } else {
-                const entity = ContinentRepository().createEntity();
-                entity.name = result.continent;
-                entity.visitor = 1;
-                entity.links_gen = 0;
-                entity.links_redirect = 0;
-                await ContinentRepository().save(entity);
+    if (ip.length > 3)
+        iplocate(ip).then(async (result) => {
+            if (result) {
+                let continentEntity = await ContinentRepository().search().where('name').equals(result.continent).return.first();
+                if (continentEntity) {
+                    continentEntity.entityData[[type]] += 1;
+                    await ContinentRepository().save(continentEntity);
+                } else {
+                    const entity = ContinentRepository().createEntity();
+                    entity.name = result.continent;
+                    entity.visitor = 1;
+                    entity.links_gen = 0;
+                    entity.links_redirect = 0;
+                    await ContinentRepository().save(entity);
+                }
             }
         }
-    }
-    ).catch((err) => {
-        console.error(err);
-    });
+        ).catch((err) => {
+            console.error(err);
+        });
 };
 
 const counterInc = async (name) => {
@@ -42,9 +43,9 @@ export const ShortUrl = async (req, res) => {
     } = req.query;
 
 
-    const ip = req.headers["x-forwarded-for"];
-    if (ip.length) {
-        saveIp(ip, 'links_gen');
+    const address = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    if (address.length) {
+        saveIp(address, 'links_gen');
     }
 
     counterInc('links_generated');
@@ -63,9 +64,9 @@ export const ShortUrl = async (req, res) => {
 };
 
 export const LongUrl = async (req, res) => {
-    const ip = req.headers["x-forwarded-for"];
-    if (ip.length) {
-        await saveIp(ip, 'links_redirect');
+    const address = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    if (address.length) {
+        await saveIp(address, 'links_redirect');
     }
     counterInc('links_redirected');
 
@@ -132,10 +133,10 @@ export const GetContinent = async (req, res) => {
 export const SaveInfo = async (req, res) => {
     counterInc('visitor');
 
-    const ip = req.headers["x-forwarded-for"];
+    const address = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
-    if (ip.length) {
-        saveIp(ip, 'visitor');
+    if (address.length) {
+        saveIp(address, 'visitor');
     }
 
     res.status(200).json({ message: 'success' });
