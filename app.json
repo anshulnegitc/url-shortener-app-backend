@@ -1,0 +1,7 @@
+{
+  "name": "Url Shortener App bakcend",
+  "description": "It's an imitation of Url Shortener Service.",
+  "repository": "https://github.com/anshulnegitc/url-shortener-app-backend",
+  "logo": "",
+  "keywords": ["NodeJs", "Redis"]
+}

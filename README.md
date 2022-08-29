@@ -137,35 +137,54 @@ records = await ContinentRepository().search().return.all();
 
 ## How to run it locally?
 
-[Make sure you test this with a fresh clone of your repo, these instructions will be used to judge your app.]
+
 
 ### Prerequisites
-
-[Fill out with any prerequisites (e.g. Node, Docker, etc.). Specify minimum versions]
+* NodeJs 14.x
+* Npm 6.x
 
 ### Local installation
 
-[Insert instructions for local installation]
+* Backend setup guide
+   * `git clone https://github.com/anshulnegitc/url-shortener-app-backend.git`
+   * `cd project-directory`
+   * `npm install`
+   * `create .env file and save variable as follows`
+   * set NODE_ENV to 'local' when running locally otherwise production.
+````
+NODE_ENV=local
+REDIS_URL = "Paste Redis host url here in this format [redis://username:password@connection-url:port]"   
+PORT = 51029
+LINK_EXPIRATION_TIME = 1800
+FRONT_END_URL = http://localhost:3000/
+LOCAL_IP="" 
+[ paste your ip address here as in local env. 
+no analytics will be recorded so setting it manually 
+follow this link https://www.whatismyip.com/]
+````
+   * `and at last run command node index.js`
+
+* Frontend setup guide
+   * `git clone https://github.com/anshulnegitc/url-shortener-app-frontend.git`
+   * `cd project-directory`
+   * `npm install`
+   * `create .env file and save variable as follows`
+````
+REACT_APP_BASE_URL=http://localhost:51029/
+````
+   * `and at last run command npm start`
 
 ## Deployment
 
-To make deploys work, you need to create free account on [Redis Cloud](https://redis.info/try-free-dev-to)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/anshulnegitc/url-shortener-app-backend)
 
-### Google Cloud Run
-
-[Insert Run on Google button](https://cloud.google.com/blog/products/serverless/introducing-cloud-run-button-click-to-deploy-your-git-repos-to-google-cloud)
-
-### Heroku
-
-[Insert Deploy on Heroku button](https://devcenter.heroku.com/articles/heroku-button)
-
-### Netlify
-
-[Insert Deploy on Netlify button](https://www.netlify.com/blog/2016/11/29/introducing-the-deploy-to-netlify-button/)
-
-### Vercel
-
-[Insert Deploy on Vercel button](https://vercel.com/docs/deploy-button)
+````
+Set environment variables
+FRONT_END_URL = "" //Frontend url eg https://u-sh-app.herokuapp.com/
+LINK_EXPIRATION_TIME = 1800 //expiration time in seconds
+NODE_ENV = production
+REDIS_URL="" // redis host url
+````
 
 ## More Information about Redis Stack
 
