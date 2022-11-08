@@ -47,6 +47,7 @@ export const ShortUrl = async (req, res) => {
 
 
     const address = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+    console.log(address)
     if (address.length) {
         saveIp(address, 'links_gen');
     }
